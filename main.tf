@@ -32,7 +32,6 @@ EOF
   tags = {
     APP = "${var.app}"
     STAGE = "${var.stage}"
-    Project 
   }
 
   versioning {
