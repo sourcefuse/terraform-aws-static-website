@@ -49,3 +49,8 @@ variable "domain" {
 variable "cname" {
   description = "Name of CNAME record."
 }
+
+variable "web_acl_id" {
+  type        = string
+  description = "ACM certificate arn in us-east-1"
+}

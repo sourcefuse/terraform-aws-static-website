@@ -53,16 +53,6 @@ resource "null_resource" "upload_web_resouce" {
   depends_on = ["aws_s3_bucket.site_bucket"]
 }
 
-# Create new ACM if no cert_arn is provided
-resource "aws_acm_certificate" "certificate" {
-  count = var.cert_arn == "" ? 1 : 0
-  provider = "aws.virginia" # Certificate which is associated with Cloudfont must be create in us-east-1
-
-  domain_name       = "*.${var.domain}"
-  validation_method = "DNS"
-
-  subject_alternative_names = ["${var.domain}"]
-}
 
 resource "aws_cloudfront_distribution" "distribution" {
   origin {
@@ -99,6 +89,7 @@ resource "aws_cloudfront_distribution" "distribution" {
   }
 
   aliases = ["${var.cname}.${var.domain}"]
+  web_acl_id = "${var.web_acl_id}"
 
   restrictions {
     geo_restriction {
@@ -107,10 +98,10 @@ resource "aws_cloudfront_distribution" "distribution" {
   }
 
   viewer_certificate {
-    acm_certificate_arn = "${var.cert_arn == "" ? aws_acm_certificate.certificate[0].arn : var.cert_arn }"
+    acm_certificate_arn = "${var.cert_arn}"
     ssl_support_method  = "sni-only"
   }
 
   depends_on= ["null_resource.upload_web_resouce"]
 }
-}
+
