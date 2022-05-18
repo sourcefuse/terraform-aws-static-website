@@ -32,6 +32,7 @@ EOF
   tags = {
     APP = "${var.app}"
     STAGE = "${var.stage}"
+    Project 
   }
 
   versioning {
@@ -113,19 +114,4 @@ resource "aws_cloudfront_distribution" "distribution" {
 
   depends_on= ["null_resource.upload_web_resouce"]
 }
-
-resource "aws_route53_zone" "zone" {
-  name = "${var.domain}"
-}
-
-resource "aws_route53_record" "www" {
-  zone_id = "${aws_route53_zone.zone.zone_id}"
-  name    = "${var.cname}"
-  type    = "A"
-
-  alias {
-    name                   = "${aws_cloudfront_distribution.distribution.domain_name}"
-    zone_id                = "${aws_cloudfront_distribution.distribution.hosted_zone_id}"
-    evaluate_target_health = false
-  }
 }
